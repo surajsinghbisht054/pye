@@ -1,7 +1,7 @@
 
 # Pye (What is pye?)
 
-Collection of Python Classes For working with Network protocol.
+Collection of Python Classes For working with Network protocol Ethernet/TCP/IP/UDP/ICMP Etc Etc.
 
 
 ## Getting Started
