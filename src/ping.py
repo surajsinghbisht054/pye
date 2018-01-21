@@ -32,48 +32,83 @@ __version__        = '0.1                                ' #  Version
 __maintainer__     = 'Suraj Singh Bisht                  ' #  Project Current Maintainer
 __status__         = 'Production                         ' #  Project Status
 
-
 # import module
-import tempfile
+import socket
 import os
-from PcapHandler import Pcap
-import binascii
-
-def hexdump(data):
-
-	hexdata = binascii.hexlify(data)
-	#print hexdata
-	print "\t","_"*50,'\n'
-	a=0
-	for num, i in enumerate(range(0, len(hexdata)+32, 32)[1:]):
-		line = hexdata[a:i]
-		#print '='*60,line
-		print "00{}0\t".format(num),
-		x=0
-		for j in range(0, len(line)+2, 2):
-			print line[x:j].upper(),
-
-			x=j
-		print ''
-		a=i
-	print "\t","_"*50
-	return
+import random
+import time
+import select
+from ICMP import ICMPPacket, ext_icmp_header
 
 
 
-class ShowPacket:
-	def __init__(self, data=[], **kwargs):
-		self.data = data
-		self.kwargs = kwargs
-		self.showpacket()
+def catch_ping_reply(s, ID, time_sent, timeout=1):
 
-	def showpacket(self):
-		tmp = tempfile.mkstemp(suffix='.cap')
-		pkt = Pcap(tmp[1], **self.kwargs)
-		for i in self.data:
-			pkt.write(i)
-		pkt.close()
-		cmd = 'wireshark \"{}\" '.format(tmp[1])
-		print cmd
-		os.system(cmd)
-		return
+    # create while loop
+    while True:
+        starting_time = time.time()     # Record Starting Time
+
+        # to handle timeout function of socket
+        process = select.select([s], [], [], timeout)
+        
+        # check if timeout
+        if process[0] == []:
+            return
+
+        # receive packet
+        rec_packet, addr = s.recvfrom(1024)
+
+        # extract icmp packet from received packet 
+        icmp = rec_packet[20:28]
+
+        # extract information from icmp packet
+        _id = ext_icmp_header(icmp)['id']
+
+        # check identification
+        if _id == ID:
+            return ext_icmp_header(icmp)
+    return
+
+
+# 
+def single_ping_request(s, addr=None):
+
+    # Random Packet Id
+    pkt_id = random.randrange(10000,65000)
+    
+    # Create ICMP Packet
+    packet = ICMPPacket(icmp_id=pkt_id).raw
+
+    # Send ICMP Packet
+    while packet:
+        sent = s.sendto(packet, (addr, 1))
+        packet = packet[sent:]
+
+    return pkt_id
+
+
+def main():
+    # create socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+    
+    # take Input
+    addr = raw_input("[+] Enter Domain Name : ") or "www.google.com"
+    
+    # Request sent
+    ID = single_ping_request(s, addr)
+
+    # Catch Reply
+    reply = catch_ping_reply(s, ID, time.time())
+
+    if reply:
+        print reply
+
+    # close socket
+    s.close()
+    return
+
+if __name__=='__main__':
+    main()
+
+
+

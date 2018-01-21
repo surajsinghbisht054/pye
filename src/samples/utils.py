@@ -32,48 +32,74 @@ __version__        = '0.1                                ' #  Version
 __maintainer__     = 'Suraj Singh Bisht                  ' #  Project Current Maintainer
 __status__         = 'Production                         ' #  Project Status
 
-
-# import module
-import tempfile
-import os
-from PcapHandler import Pcap
-import binascii
-
-def hexdump(data):
-
-	hexdata = binascii.hexlify(data)
-	#print hexdata
-	print "\t","_"*50,'\n'
-	a=0
-	for num, i in enumerate(range(0, len(hexdata)+32, 32)[1:]):
-		line = hexdata[a:i]
-		#print '='*60,line
-		print "00{}0\t".format(num),
-		x=0
-		for j in range(0, len(line)+2, 2):
-			print line[x:j].upper(),
-
-			x=j
-		print ''
-		a=i
-	print "\t","_"*50
-	return
+import socket
+from binascii import hexlify
+import fcntl
+import struct
+import array
 
 
+# # found on <http://code.activestate.com/recipes/439093/#c1>
+# get all interface names
+def all_interfaces():
+    max_possible = 128  # arbitrary. raise if needed.
 
-class ShowPacket:
-	def __init__(self, data=[], **kwargs):
-		self.data = data
-		self.kwargs = kwargs
-		self.showpacket()
+    bytes = max_possible * 32
 
-	def showpacket(self):
-		tmp = tempfile.mkstemp(suffix='.cap')
-		pkt = Pcap(tmp[1], **self.kwargs)
-		for i in self.data:
-			pkt.write(i)
-		pkt.close()
-		cmd = 'wireshark \"{}\" '.format(tmp[1])
-		print cmd
-		os.system(cmd)
-		return
+    # Create a dummy socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+
+    names = array.array('B', '\0' * bytes)
+
+    outbytes = struct.unpack('iL', fcntl.ioctl(
+        s.fileno(),
+        0x8912,  # SIOCGIFCONF
+        struct.pack('iL', bytes, names.buffer_info()[0])
+    ))[0]
+
+    namestr = names.tostring()
+
+    lst = []
+
+    for i in range(0, outbytes, 40):
+        name = namestr[i:i+16].split('\0', 1)[0]
+        ip   = namestr[i+20:i+24]
+        lst.append((name, socket.inet_ntoa(ip)))
+
+    s.close()
+    return lst
+
+
+
+def get_mac(interface, p=0):
+    s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW)
+    s.bind((interface,p))
+    mac =  hexlify(s.getsockname()[4])
+    s.close()
+    return mac
+
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+def get_ipv6():
+    s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+
+    s.connect(('2001:0db8:85a3:0000:0000:8a2e:0370:7334', 1))
+
+    ip = s.getsockname()[0]
+
+    s.close()
+    return ip
+
+if __name__ == '__main__':
+    print all_interfaces()

@@ -89,10 +89,10 @@ class IPPacket:
         self._ip_ecn = ip_ecn
         self._ip_tol = ip_tol
         self._ip_idf = ip_idf
-        self._ip_flag_rsv = ip_flag_rsv
-        self._ip_flag_dtf = ip_flag_dtf
-        self._ip_flag_mrf = ip_flag_mrf
-        self._ip_frag_offset = ip_frag_offset
+        self._ip_flag_rsv = (ip_flag_rsv << 15)
+        self._ip_flag_dtf = (ip_flag_dtf << 14)
+        self._ip_flag_mrf = (ip_flag_mrf << 13)
+        self._ip_frag_offset = (ip_frag_offset)
         self._ip_ttl = ip_ttl
         self._ip_proto = ip_proto
         self._ip_chk = ip_chk
@@ -124,7 +124,7 @@ class IPPacket:
         #  Size = 1+1+2+2+2+1+1+2+4+4
 
 
-        self.raw = struct.pack('!BBHHHBB' , 
+        self.raw = struct.pack('!BBHHhBB' , 
             self.ip_ver,   # IP Version 
             self.ip_dfc,   # Differentiate Service Feild
             self.ip_tol,   # Total Length
@@ -133,8 +133,7 @@ class IPPacket:
             self.ip_ttl,   # Time to leave
             self.ip_proto, # protocol
             )
-
-
+        
         self.raw = self.raw + struct.pack('H',
             self.ip_chk   # checksum
             )
@@ -163,8 +162,8 @@ class IPPacket:
         self.ip_idf = self._ip_idf
 
         # ---- [ Flags ]
-        self.ip_flg = (self._ip_flag_rsv << 7) + (self._ip_flag_dtf << 6) + (self._ip_flag_mrf << 5) + (self._ip_frag_offset)
-
+        self.ip_flg = self._ip_flag_rsv + self._ip_flag_dtf + self._ip_flag_mrf  + self._ip_frag_offset
+        
         # ---- [ Total Length ]
         self.ip_ttl = self._ip_ttl
 
@@ -226,7 +225,7 @@ def LoadIP(tcp=None, **kwargs):
 
 
 def main():
-    pkt = IPPacket()
+    pkt = IPPacket(ip_flag_dtf=1)
     print ext_ip_header(pkt.raw)
 
     try:
