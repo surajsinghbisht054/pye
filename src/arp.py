@@ -65,7 +65,9 @@ def arp_request(ip, addr, mac):
     pkt = eth+arp.raw
     return pkt
 
-
+def catch_arp_reply(s, ip):
+    
+    return
 
 
 def main(iface):
@@ -75,9 +77,9 @@ def main(iface):
     mac = get_mac(iface)
     ip = get_ip()
     addr = socket.gethostbyname('www.google.com')
-
+    ip = '192.168.1.1'
     packet = arp_request(ip, addr, mac)    
-    #from samples.wsk import ShowPacket
+    from samples.wsk import ShowPacket
 
     #ShowPacket([arp_request(ip, addr, mac)])
     #print(ARP_FRAME)
@@ -88,4 +90,4 @@ def main(iface):
 
 
 if __name__ == '__main__':
-    main('wlx60e3271722fc')
+    main("wlp2s0")

@@ -103,3 +103,5 @@ def get_ipv6():
 
 if __name__ == '__main__':
     print all_interfaces()
+    print get_ip()
+    print get_ipv6()
