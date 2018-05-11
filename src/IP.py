@@ -36,7 +36,7 @@ __status__         = 'Production                         ' #  Project Status
 import socket
 import struct
 import binascii
-
+from samples.utils import get_ip
 
 # Link type [required for wireshark pcap file]
 LINKTYPE0 = 101
@@ -47,7 +47,7 @@ class IPPacket:
         # Parameters With Default Values
 
         dst='127.0.0.1',    # Destination IP
-        src='192.168.1.101',    # Source IP
+        src=get_ip(),#'192.168.1.101',    # Source IP
         
         # IP Version
         ip_ver = 4,                  

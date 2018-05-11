@@ -39,6 +39,7 @@ import struct
 import binascii
 from IP import LoadIP
 from Ether import EtherPacket
+from samples import utils
 
 
 
@@ -49,7 +50,7 @@ class TCPPacket:
         dport = 80, 
         sport = 65535, 
         dst='127.0.0.1', 
-        src='192.168.1.101', 
+        src=utils.get_ip(),#'192.168.1.101', 
         data = '',
         seq = 0,
         ack_seq=0,
@@ -138,7 +139,7 @@ class TCPPacket:
             else:
                 raise "Something Wrong here"
 
-
+        s = (s>>16) + (s & 0xffff)
         # One's Complement
         s = s + (s >> 16)
         s = ~s & 0xffff
@@ -192,6 +193,9 @@ class TCPPacket:
 
 
         return
+
+
+
 
 
 def main():

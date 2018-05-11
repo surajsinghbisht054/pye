@@ -36,7 +36,7 @@ __status__         = 'Production                         ' #  Project Status
 import struct            # struct module
 import binascii          # binary ASCII module
 from IP import IPPacket  # Class To Create IPv4 Packet. (Check Code_IPv4_packet_using_socket Link)  
-
+from samples import utils
 
 
 
@@ -74,8 +74,11 @@ ETH_P_WCCP     = 0x883E    # b-cache coordination protocol
 
 # Simple Ethernet Frame Class
 class EtherPacket:
-    def __init__(self, dst='ff:ff:ff:ff:ff:ff', src='ff:ff:ff:ff:ff:ff', protocol=ETH_P_IP, data=''):
+    def __init__(self, dst='ff:ff:ff:ff:ff:ff', src='', protocol=ETH_P_IP, data=''):
         self.dst = dst                # Destination MAC
+        if not src:
+            interface = utils.all_interfaces()[::-1][0][0]
+            src=utils.get_mac(interface=interface)
         self.src = src                # Source MAC
         self.protocol = protocol      # Protocol Types
         self.raw = None               # Raw Data
