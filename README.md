@@ -3,6 +3,17 @@
 
 Collection of Python Classes For working with Network protocol Ethernet/TCP/IP/UDP/ICMP Etc Etc.
 
+## STILL UNDER DEVELOPING
+
+This project is migrate from pye (python2) to current project.
+
+Fork and send pr to this project!
+
+### Disclaimer
+
+This project is for Computer Network Course, Dept. CSE, SUSTech.
+
+Education purpose Mainly.
 
 ## Getting Started
 
