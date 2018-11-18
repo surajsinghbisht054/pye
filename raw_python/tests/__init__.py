@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 #
-#           Copyright 2018 Suraj Singh Bisht
+#           Copyright 2018 Dept. CSE SUSTech
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -22,13 +22,12 @@
 # --------------------------------------------------------------------------
 
 
-__author__         = 'Suraj Singh Bisht                  ' #  Name Of Author
-__credit__         = '[]                                 ' #  Contributers Name
-__contact__        = 'surajsinghbisht054@gmail.com       ' #  Email
-__copyright__      = 'Copyright 2018 Suraj Singh Bisht   ' #  Copyright
-__license__        = 'Apache 2.0                         ' #  LICENSE
-__Update__         = '2018-01-11 12:00:29.991758         ' #  Last Update 
-__version__        = '0.1                                ' #  Version
-__maintainer__     = 'Suraj Singh Bisht                  ' #  Project Current Maintainer
-__status__         = 'Production                         ' #  Project Status
-
+__author__ = 'Suraj Singh Bisht                  '  # Name Of Author
+__credit__ = '[]                                 '  # Contributers Name
+__contact__ = 'surajsinghbisht054@gmail.com       '  # Email
+__copyright__ = 'Copyright 2018 Suraj Singh Bisht   '  # Copyright
+__license__ = 'Apache 2.0                         '  # LICENSE
+__Update__ = '2018-01-11 12:33:09.399381         '  # Last Update
+__version__ = '0.1                                '  # Version
+__maintainer__ = 'Suraj Singh Bisht                  '  # Project Current Maintainer
+__status__ = 'Production                         '  # Project Status

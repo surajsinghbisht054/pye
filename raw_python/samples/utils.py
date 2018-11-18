@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 #
+#           Copyright 2018 Dept. CSE SUSTech
 #           Copyright 2018 Suraj Singh Bisht
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,21 +23,21 @@
 # --------------------------------------------------------------------------
 
 
-__author__         = 'Suraj Singh Bisht                  ' #  Name Of Author
-__credit__         = '[]                                 ' #  Contributers Name
-__contact__        = 'surajsinghbisht054@gmail.com       ' #  Email
-__copyright__      = 'Copyright 2018 Suraj Singh Bisht   ' #  Copyright
-__license__        = 'Apache 2.0                         ' #  LICENSE
-__Update__         = '2018-01-11 12:00:29.991758         ' #  Last Update 
-__version__        = '0.1                                ' #  Version
-__maintainer__     = 'Suraj Singh Bisht                  ' #  Project Current Maintainer
-__status__         = 'Production                         ' #  Project Status
+__author__ = 'Suraj Singh Bisht, HHQ. ZHANG'
+__credit__ = '["Suraj Singh Bisht",]'
+__contact__ = 'contact@jinlab.cn'
+__copyright__ = 'Copyright 2018 Dept. CSE SUSTech'
+__license__ = 'Apache 2.0'
+__Update__ = '2018-01-11 12:33:09.399381'
+__version__ = '0.1'
+__maintainer__ = 'HHQ. ZHANG'
+__status__ = 'Production'
 
-import socket
-from binascii import hexlify
-import fcntl
-import struct
 import array
+import fcntl
+import socket
+import struct
+from binascii import hexlify
 
 
 # # found on <http://code.activestate.com/recipes/439093/#c1>
@@ -48,7 +49,6 @@ def all_interfaces():
 
     # Create a dummy socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
 
     names = array.array('B', '\0' * bytes)
 
@@ -63,21 +63,21 @@ def all_interfaces():
     lst = []
 
     for i in range(0, outbytes, 40):
-        name = namestr[i:i+16].split('\0', 1)[0]
-        ip   = namestr[i+20:i+24]
+        name = namestr[i:i + 16].split('\0', 1)[0]
+        ip = namestr[i + 20:i + 24]
         lst.append((name, socket.inet_ntoa(ip)))
 
     s.close()
     return lst
 
 
-
 def get_mac(interface, p=0):
     s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW)
-    s.bind((interface,p))
-    mac =  hexlify(s.getsockname()[4])
+    s.bind((interface, p))
+    mac = hexlify(s.getsockname()[4])
     s.close()
     return mac
+
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -91,6 +91,7 @@ def get_ip():
         s.close()
     return IP
 
+
 def get_ipv6():
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
 
@@ -101,7 +102,8 @@ def get_ipv6():
     s.close()
     return ip
 
+
 if __name__ == '__main__':
-    print all_interfaces()
-    print get_ip()
-    print get_ipv6()
+    print(all_interfaces())
+    print(get_ip())
+    print(get_ipv6())

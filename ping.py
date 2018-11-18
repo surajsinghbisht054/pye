@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 #
+#           Copyright 2018 Dept. CSE SUSTech
 #           Copyright 2018 Suraj Singh Bisht
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,35 +23,33 @@
 # --------------------------------------------------------------------------
 
 
-__author__         = 'Suraj Singh Bisht                  ' #  Name Of Author
-__credit__         = '[]                                 ' #  Contributers Name
-__contact__        = 'surajsinghbisht054@gmail.com       ' #  Email
-__copyright__      = 'Copyright 2018 Suraj Singh Bisht   ' #  Copyright
-__license__        = 'Apache 2.0                         ' #  LICENSE
-__Update__         = '2018-01-11 12:00:29.991758         ' #  Last Update 
-__version__        = '0.1                                ' #  Version
-__maintainer__     = 'Suraj Singh Bisht                  ' #  Project Current Maintainer
-__status__         = 'Production                         ' #  Project Status
+__author__ = 'Suraj Singh Bisht, HHQ. ZHANG'
+__credit__ = '["Suraj Singh Bisht",]'
+__contact__ = 'contact@jinlab.cn'
+__copyright__ = 'Copyright 2018 Dept. CSE SUSTech'
+__license__ = 'Apache 2.0'
+__Update__ = '2018-01-11 12:33:09.399381'
+__version__ = '0.1'
+__maintainer__ = 'HHQ. ZHANG'
+__status__ = 'Production'
 
+import random
+import select
 # import module
 import socket
-import os
-import random
 import time
-import select
-from ICMP import ICMPPacket, ext_icmp_header
 
+from raw_python import ICMPPacket, ext_icmp_header
 
 
 def catch_ping_reply(s, ID, time_sent, timeout=1):
-
     # create while loop
     while True:
-        starting_time = time.time()     # Record Starting Time
+        starting_time = time.time()  # Record Starting Time
 
         # to handle timeout function of socket
         process = select.select([s], [], [], timeout)
-        
+
         # check if timeout
         if process[0] == []:
             return
@@ -72,10 +71,9 @@ def catch_ping_reply(s, ID, time_sent, timeout=1):
 
 # 
 def single_ping_request(s, addr=None):
-
     # Random Packet Id
-    pkt_id = random.randrange(10000,65000)
-    
+    pkt_id = random.randrange(10000, 65000)
+
     # Create ICMP Packet
     packet = ICMPPacket(icmp_id=pkt_id).raw
 
@@ -90,10 +88,10 @@ def single_ping_request(s, addr=None):
 def main():
     # create socket
     s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
-    
+
     # take Input
-    addr = raw_input("[+] Enter Domain Name : ") or "www.google.com"
-    
+    addr = input("[+] Enter Domain Name : ") or "www.sustc.edu.cn"
+
     # Request sent
     ID = single_ping_request(s, addr)
 
@@ -101,14 +99,12 @@ def main():
     reply = catch_ping_reply(s, ID, time.time())
 
     if reply:
-        print reply
+        print(reply)
 
     # close socket
     s.close()
     return
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     main()
-
-
-
