@@ -39,7 +39,11 @@ import select
 import socket
 import time
 
-from raw_python import ICMPPacket, ext_icmp_header
+from raw_python import ICMPPacket, parse_icmp_header, parse_eth_header, parse_ip_header
+
+
+def calc_rtt(time_sent):
+    return time.time() - time_sent
 
 
 def catch_ping_reply(s, ID, time_sent, timeout=1):
@@ -51,31 +55,26 @@ def catch_ping_reply(s, ID, time_sent, timeout=1):
         process = select.select([s], [], [], timeout)
 
         # check if timeout
-        if process[0] == []:
-            return
+        if not process[0]:
+            return calc_rtt(time_sent), None, None
 
         # receive packet
         rec_packet, addr = s.recvfrom(1024)
 
         # extract icmp packet from received packet 
-        icmp = rec_packet[20:28]
-
-        # extract information from icmp packet
-        _id = ext_icmp_header(icmp)['id']
+        icmp = parse_icmp_header(rec_packet[20:28])
 
         # check identification
-        if _id == ID:
-            return ext_icmp_header(icmp)
-    return
+        if icmp['id'] == ID:
+            return calc_rtt(time_sent), parse_ip_header(rec_packet[:20]), icmp
 
 
-# 
 def single_ping_request(s, addr=None):
     # Random Packet Id
     pkt_id = random.randrange(10000, 65000)
 
     # Create ICMP Packet
-    packet = ICMPPacket(icmp_id=pkt_id).raw
+    packet = ICMPPacket(_id=pkt_id).raw
 
     # Send ICMP Packet
     while packet:
@@ -91,15 +90,18 @@ def main():
 
     # take Input
     addr = input("[+] Enter Domain Name : ") or "www.sustc.edu.cn"
-
+    print('PING {0} ({1}) 56(84) bytes of data.'.format(addr, socket.gethostbyname(addr)))
     # Request sent
     ID = single_ping_request(s, addr)
 
     # Catch Reply
-    reply = catch_ping_reply(s, ID, time.time())
+    rtt, reply, icmp_reply = catch_ping_reply(s, ID, time.time())
 
     if reply:
-        print(reply)
+        reply['length'] = reply['Total Length'] - 20  # sub header
+        print('{0[length]} bytes reply from {0[Source Address]} ({0[Source Address]}): '
+              'icmp_seq={1[seq]} ttl={0[TTL]} time={2:.2f} ms'
+              .format(reply, icmp_reply, rtt*1000))
 
     # close socket
     s.close()

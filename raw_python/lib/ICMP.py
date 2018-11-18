@@ -37,6 +37,7 @@ import socket
 # import modules
 import struct
 
+from .util import Packet
 from .Ether import EtherPacket
 from .IP import LoadIP
 
@@ -54,64 +55,26 @@ ERROR_DESCR = {
 }
 
 
-class ICMPPacket:
-    def __init__(self,
-                 icmp_type=ICMP_ECHO_REQUEST,
-                 icmp_code=0,
-                 icmp_chks=0,
-                 icmp_id=1,
-                 icmp_seq=1,
-                 data=b'',
-                 ):
-        self.icmp_type = icmp_type
-        self.icmp_code = icmp_code
-        self.icmp_chks = icmp_chks
-        self.icmp_id = icmp_id
-        self.icmp_seq = icmp_seq
+class ICMPPacket(Packet):
+    def __init__(self, _type=ICMP_ECHO_REQUEST, code=0, checksum=0, _id=1, _seq=1, data=b''):
+        self.type = _type
+        self.code = code
+        self.checksum = checksum
+        self.id = _id
+        self.seq = _seq
         self.data = data
         self.raw = None
         self.create_icmp_field()
 
     def create_icmp_field(self):
-        self.raw = struct.pack(ICMP_STRUCTURE_FMT,
-                               self.icmp_type,
-                               self.icmp_code,
-                               self.icmp_chks,
-                               self.icmp_id,
-                               self.icmp_seq,
-                               )
-
+        _raw = struct.pack(ICMP_STRUCTURE_FMT, self.type, self.code, self.checksum, self.id, self.seq)
         # calculate checksum
-        self.icmp_chks = self.chksum(self.raw + self.data)
-
-        self.raw = struct.pack(ICMP_STRUCTURE_FMT,
-                               self.icmp_type,
-                               self.icmp_code,
-                               self.icmp_chks,
-                               self.icmp_id,
-                               self.icmp_seq,
-                               )
-
-        return
-
-    def chksum(self, msg):
-        s = 0  # Binary Sum
-
-        # loop taking 2 characters at a time
-        for i in range(0, len(msg), 2):
-            a = msg[i]
-            b = msg[i + 1]
-            s = s + (a + (b << 8))
-
-        # One's Complement
-        s = s + (s >> 16)
-        s = ~s & 0xffff
-
-        return s
+        self.checksum = self.calc_checksum(_raw + self.data)
+        self.raw = struct.pack(ICMP_STRUCTURE_FMT, self.type, self.code, self.checksum, self.id, self.seq)
 
 
 # ICMP HEADER Extraction
-def ext_icmp_header(data):
+def parse_icmp_header(data):
     icmph = struct.unpack(ICMP_STRUCTURE_FMT, data)
     data = {
         'type': icmph[0],
@@ -125,7 +88,7 @@ def ext_icmp_header(data):
 
 def main():
     icmp = ICMPPacket()
-    print(ext_icmp_header(icmp.raw))
+    print(parse_icmp_header(icmp.raw))
     ip = LoadIP(tcp=icmp, ip_proto=socket.IPPROTO_ICMP)
     eth = EtherPacket(data=ip)
 

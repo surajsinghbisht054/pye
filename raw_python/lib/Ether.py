@@ -95,7 +95,7 @@ class EtherPacket:
 
 
 # Ethernet Header
-def ext_eth_header(data):
+def parse_eth_header(data):
     storeobj = data
     storeobj = struct.unpack("!6s6sH", storeobj)
     destination_mac = binascii.hexlify(storeobj[0])
@@ -109,7 +109,7 @@ def ext_eth_header(data):
 
 def main():
     pkt = EtherPacket()
-    print(ext_eth_header(pkt.raw))
+    print(parse_eth_header(pkt.raw))
     # return
     pkt1 = IPPacket()
     try:

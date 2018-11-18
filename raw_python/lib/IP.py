@@ -37,87 +37,41 @@ __status__ = 'Production'
 import socket
 import struct
 
-from raw_python.samples.utils import get_ip
+from .util import Packet
+from ..samples.utils import get_ip
 
 # Link type [required for wireshark pcap file]
 LINKTYPE0 = 101
 LINKTYPE1 = 228
 
 
-class IPPacket:
-    def __init__(self,
-                 # Parameters With Default Values
-
-                 dst='127.0.0.1',  # Destination IP
-                 src=get_ip(),  # '192.168.1.101',    # Source IP
-
-                 # IP Version
-                 ip_ver=4,
-                 ip_vhl=5,
-
-                 # Differentiate service field
-                 ip_dsc=0,
-                 ip_ecn=0,
-
-                 # Length
-                 ip_tol=20,
-
-                 # Identification
-                 ip_idf=1,
-
-                 # flags
-                 ip_flag_rsv=0,
-                 ip_flag_dtf=0,
-                 ip_flag_mrf=0,
-                 ip_frag_offset=0,
-
-                 # Time To live
-                 ip_ttl=64,
-
-                 # Protocol
-                 ip_proto=socket.IPPROTO_TCP,
-
-                 # checksum
-                 ip_chk=0,
-                 ):
+class IPPacket(Packet):
+    def __init__(self, dst='127.0.0.1', src=get_ip(), ver=4, vhl=5, dsc=0, ecn=0, tol=20, idf=1, flag_rsv=0, flag_dtf=0,
+                 flag_mrf=0, frag_offset=0, ttl=64, proto=socket.IPPROTO_TCP, checksum=0):
         # load data into self container
         self.dst = dst
         self.src = src
         self.raw = None
-        self._ip_ver = ip_ver
-        self._ip_vhl = ip_vhl
-        self._ip_dsc = ip_dsc
-        self._ip_ecn = ip_ecn
-        self._ip_tol = ip_tol
-        self._ip_idf = ip_idf
-        self._ip_flag_rsv = (ip_flag_rsv << 15)
-        self._ip_flag_dtf = (ip_flag_dtf << 14)
-        self._ip_flag_mrf = (ip_flag_mrf << 13)
-        self._ip_frag_offset = (ip_frag_offset)
-        self._ip_ttl = ip_ttl
-        self._ip_proto = ip_proto
-        self._ip_chk = ip_chk
+        self._ver = ver
+        self._vhl = vhl
+        self._dsc = dsc
+        self._ecn = ecn
+        self._tol = tol
+        self._idf = idf
+        self._flag_rsv = (flag_rsv << 15)
+        self._flag_dtf = (flag_dtf << 14)
+        self._flag_mrf = (flag_mrf << 13)
+        self._frag_offset = frag_offset
+        self._ttl = ttl
+        self._proto = proto
+        self._checksum = checksum
 
         self.create_ipv4_feilds_list()  # create ipv4 fields object
-        self.assemble_ipv4_feilds()  # assemble all values
-        self.ip_chk = self.chksum(self.raw)  # Calculate Checksum
-        self.assemble_ipv4_feilds()  # assembl ipv4 feilds
+        self.assemble_ipv4_fields()  # assemble all values
+        self.ip_chk = self.calc_checksum(self.raw)  # Calculate Checksum
+        self.assemble_ipv4_fields()  # assembl ipv4 feilds
 
-    def chksum(self, msg):
-        s = 0  # Binary Sum
-
-        # loop taking 2 characters at a time
-        for i in range(0, len(msg), 2):
-            a = ord(msg[i])
-            b = ord(msg[i + 1])
-            s = s + (a + (b << 8))
-
-        # One's Complement
-        s = s + (s >> 16)
-        s = ~s & 0xffff
-        return s
-
-    def assemble_ipv4_feilds(self):
+    def assemble_ipv4_fields(self):
         #  Size = 1+1+2+2+2+1+1+2+4+4
 
         self.raw = struct.pack('!BBHHhBB',
@@ -143,28 +97,28 @@ class IPPacket:
 
     def create_ipv4_feilds_list(self):
         # ---- [Internet Protocol Version] ----
-        self.ip_ver = (self._ip_ver << 4) + self._ip_vhl
+        self.ip_ver = (self._ver << 4) + self._vhl
 
         # ---- [ Differentiate Servic Field ]
-        self.ip_dfc = (self._ip_dsc << 2) + self._ip_ecn
+        self.ip_dfc = (self._dsc << 2) + self._ecn
 
         # ---- [ Total Length]
-        self.ip_tol = self._ip_tol
+        self.ip_tol = self._tol
 
         # ---- [ Identification ]
-        self.ip_idf = self._ip_idf
+        self.ip_idf = self._idf
 
         # ---- [ Flags ]
-        self.ip_flg = self._ip_flag_rsv + self._ip_flag_dtf + self._ip_flag_mrf + self._ip_frag_offset
+        self.ip_flg = self._flag_rsv + self._flag_dtf + self._flag_mrf + self._frag_offset
 
         # ---- [ Total Length ]
-        self.ip_ttl = self._ip_ttl
+        self.ip_ttl = self._ttl
 
         # ---- [ Protocol ]
-        self.ip_proto = self._ip_proto
+        self.ip_proto = self._proto
 
         # ---- [ Check Sum ]
-        self.ip_chk = self._ip_chk
+        self.ip_chk = self._checksum
 
         # ---- [ Source Address ]
         self.ip_saddr = socket.inet_aton(self.src)
@@ -176,7 +130,7 @@ class IPPacket:
 
 
 # IP Header Extraction
-def ext_ip_header(data):
+def parse_ip_header(data):
     storeobj = struct.unpack("!BBHHHBBH4s4s", data)
     _version = storeobj[0]
     _tos = storeobj[1]
@@ -203,15 +157,15 @@ def ext_ip_header(data):
 
 
 def LoadIP(tcp=None, **kwargs):
-    ip = IPPacket(**kwargs)
+    ip = IPPacket()
     datalen = len(tcp.raw) + len(ip.raw)
     kwargs['ip_tol'] = datalen
-    return IPPacket(**kwargs)
+    return IPPacket()
 
 
 def main():
-    pkt = IPPacket(ip_flag_dtf=1)
-    print(ext_ip_header(pkt.raw))
+    pkt = IPPacket(flag_dtf=1)
+    print(parse_ip_header(pkt.raw))
 
     try:
         from ..samples.wsk import ShowPacket
