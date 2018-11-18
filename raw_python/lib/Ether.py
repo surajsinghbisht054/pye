@@ -34,10 +34,8 @@ __maintainer__ = 'HHQ. ZHANG'
 __status__ = 'Production'
 
 import binascii  # binary ASCII module
-# import modules
 import struct  # struct module
 
-from .IP import IPPacket  # Class To Create IPv4 Packet. (Check Code_IPv4_packet_using_socket Link)
 from ..samples import utils
 
 # Ethernet II (DIX) Protocol Types
@@ -105,20 +103,3 @@ def parse_eth_header(data):
             "Source Mac": source_mac,
             "Protocol": eth_protocol}
     return data
-
-
-def main():
-    pkt = EtherPacket()
-    print(parse_eth_header(pkt.raw))
-    # return
-    pkt1 = IPPacket()
-    try:
-        from ..samples.wsk import ShowPacket
-        ShowPacket([pkt.raw + pkt1.raw], link_type=1)
-    except:
-        print("[+] Unable To Find pye.samples.wsk script.")
-    return
-
-
-if __name__ == '__main__':
-    main()

@@ -34,12 +34,9 @@ __maintainer__ = 'HHQ. ZHANG'
 __status__ = 'Production'
 
 import socket
-# import modules
 import struct
 
 from .util import Packet
-from .Ether import EtherPacket
-from .IP import LoadIP
 
 # Header is type (8), code (8), checksum (16), id (16), sequence (16)
 #    header = struct.pack('bbHHh', ICMP_ECHO_REQUEST, 0, 0, id, 1)
@@ -84,23 +81,3 @@ def parse_icmp_header(data):
         'seq': icmph[4],
     }
     return data
-
-
-def main():
-    icmp = ICMPPacket()
-    print(parse_icmp_header(icmp.raw))
-    ip = LoadIP(tcp=icmp, ip_proto=socket.IPPROTO_ICMP)
-    eth = EtherPacket(data=ip)
-
-    try:
-        from ..samples.wsk import ShowPacket
-        pkt = eth.raw + ip.raw + icmp.raw
-        ShowPacket([pkt], link_type=1)
-    except Exception as e:
-        print(e)
-        print("[+] Unable To Find pye.samples.wsk script.")
-    return
-
-
-if __name__ == '__main__':
-    main()

@@ -52,96 +52,70 @@ class IPPacket(Packet):
         self.dst = dst
         self.src = src
         self.raw = None
-        self._ver = ver
-        self._vhl = vhl
-        self._dsc = dsc
-        self._ecn = ecn
-        self._tol = tol
-        self._idf = idf
-        self._flag_rsv = (flag_rsv << 15)
-        self._flag_dtf = (flag_dtf << 14)
-        self._flag_mrf = (flag_mrf << 13)
-        self._frag_offset = frag_offset
-        self._ttl = ttl
-        self._proto = proto
-        self._checksum = checksum
 
-        self.create_ipv4_feilds_list()  # create ipv4 fields object
+        # ---- [Internet Protocol Version] ----
+        self.ver = (ver << 4) + vhl
+        # ---- [ Differentiate Service Field ]
+        self.dfc = (dsc << 2) + ecn
+        # ---- [ Total Length]
+        self.tol = tol
+        # ---- [ Identification ]
+        self.idf = idf
+        # ---- [ Flags ]
+        self.flags = flag_rsv + flag_dtf + flag_mrf + frag_offset
+        # ---- [ Total Length ]
+        self.ttl = ttl
+        # ---- [ Protocol ]
+        self.protocol = proto
+        # ---- [ Check Sum ]
+        self.checksum = checksum
+        # ---- [ Source Address ]
+        self.source_address = socket.inet_aton(self.src)
+        # ---- [ Destination Address ]
+        self.destination_address = socket.inet_aton(self.dst)
+
         self.assemble_ipv4_fields()  # assemble all values
-        self.ip_chk = self.calc_checksum(self.raw)  # Calculate Checksum
-        self.assemble_ipv4_fields()  # assembl ipv4 feilds
+        self.checksum = self.calc_checksum(self.raw)  # Calculate Checksum
+        self.assemble_ipv4_fields()  # assemble ipv4 fields
 
     def assemble_ipv4_fields(self):
         #  Size = 1+1+2+2+2+1+1+2+4+4
 
         self.raw = struct.pack('!BBHHhBB',
-                               self.ip_ver,  # IP Version
-                               self.ip_dfc,  # Differentiate Service Feild
-                               self.ip_tol,  # Total Length
-                               self.ip_idf,  # Identification
-                               self.ip_flg,  # Flags
-                               self.ip_ttl,  # Time to leave
-                               self.ip_proto,  # protocol
+                               self.ver,  # IP Version
+                               self.dfc,  # Differentiate Service Field
+                               self.tol,  # Total Length
+                               self.idf,  # Identification
+                               self.flags,  # Flags
+                               self.ttl,  # Time to leave
+                               self.protocol,  # protocol
                                )
 
         self.raw = self.raw + struct.pack('H',
-                                          self.ip_chk  # checksum
+                                          self.checksum  # checksum
                                           )
 
         self.raw = self.raw + struct.pack('!4s4s',
-                                          self.ip_saddr,  # Source IP
-                                          self.ip_daddr,  # Destination IP
+                                          self.source_address,  # Source IP
+                                          self.destination_address,  # Destination IP
                                           # self.padding
                                           )
         return self.raw
 
-    def create_ipv4_feilds_list(self):
-        # ---- [Internet Protocol Version] ----
-        self.ip_ver = (self._ver << 4) + self._vhl
-
-        # ---- [ Differentiate Servic Field ]
-        self.ip_dfc = (self._dsc << 2) + self._ecn
-
-        # ---- [ Total Length]
-        self.ip_tol = self._tol
-
-        # ---- [ Identification ]
-        self.ip_idf = self._idf
-
-        # ---- [ Flags ]
-        self.ip_flg = self._flag_rsv + self._flag_dtf + self._flag_mrf + self._frag_offset
-
-        # ---- [ Total Length ]
-        self.ip_ttl = self._ttl
-
-        # ---- [ Protocol ]
-        self.ip_proto = self._proto
-
-        # ---- [ Check Sum ]
-        self.ip_chk = self._checksum
-
-        # ---- [ Source Address ]
-        self.ip_saddr = socket.inet_aton(self.src)
-
-        # ---- [ Destination Address ]
-        self.ip_daddr = socket.inet_aton(self.dst)
-
-        return
-
 
 # IP Header Extraction
 def parse_ip_header(data):
-    storeobj = struct.unpack("!BBHHHBBH4s4s", data)
-    _version = storeobj[0]
-    _tos = storeobj[1]
-    _total_length = storeobj[2]
-    _identification = storeobj[3]
-    _fragment_Offset = storeobj[4]
-    _ttl = storeobj[5]
-    _protocol = storeobj[6]
-    _header_checksum = storeobj[7]
-    _source_address = socket.inet_ntoa(storeobj[8])
-    _destination_address = socket.inet_ntoa(storeobj[9])
+    unpacked = struct.unpack("!BBHHHBBH4s4s", data)
+    _version = unpacked[0]
+    _tos = unpacked[1]
+    _total_length = unpacked[2]
+    _identification = unpacked[3]
+    _fragment_Offset = unpacked[4]
+    _ttl = unpacked[5]
+    _protocol = unpacked[6]
+    _header_checksum = unpacked[7]
+    _source_address = socket.inet_ntoa(unpacked[8])
+    _destination_address = socket.inet_ntoa(unpacked[9])
 
     data = {'Version': _version,
             "Tos": _tos,
@@ -156,24 +130,8 @@ def parse_ip_header(data):
     return data
 
 
-def LoadIP(tcp=None, **kwargs):
+def load_ip(tcp=None, **kwargs):
     ip = IPPacket()
-    datalen = len(tcp.raw) + len(ip.raw)
-    kwargs['ip_tol'] = datalen
+    length = len(tcp.raw) + len(ip.raw)
+    kwargs['ip_tol'] = length
     return IPPacket()
-
-
-def main():
-    pkt = IPPacket(flag_dtf=1)
-    print(parse_ip_header(pkt.raw))
-
-    try:
-        from ..samples.wsk import ShowPacket
-        ShowPacket(data=[pkt.raw], link_type=LINKTYPE0)
-    except:
-        print("[+] Unable To Find pye.samples.wsk script.")
-    return
-
-
-if __name__ == '__main__':
-    main()

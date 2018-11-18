@@ -35,8 +35,6 @@ __status__ = 'Production'
 import socket
 import struct
 
-from .Ether import EtherPacket
-from .IP import LoadIP
 from ..samples import utils
 
 TCP_STRUCTURE_FMT = '!HHLLBBHHH'
@@ -132,7 +130,7 @@ class TCPPacket:
             elif (i + 1) == len(msg):
                 s += ord(msg[i])
             else:
-                raise "Something Wrong here"
+                raise Exception("Something Wrong here")
 
         s = (s >> 16) + (s & 0xffff)
         # One's Complement
@@ -186,22 +184,3 @@ class TCPPacket:
         self.tcp_urg_ptr = 0
 
         return
-
-
-def main():
-    tcp = TCPPacket()
-    ip = LoadIP(tcp=tcp)
-    eth = EtherPacket(data=ip)
-
-    try:
-        from ..samples.wsk import ShowPacket
-        pkt = eth.raw + ip.raw + tcp.raw
-        ShowPacket([pkt], link_type=1)
-    except Exception as e:
-        print(e)
-        print("[+] Unable To Find pye.samples.wsk script.")
-    return
-
-
-if __name__ == '__main__':
-    main()
