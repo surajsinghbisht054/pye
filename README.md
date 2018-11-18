@@ -1,5 +1,5 @@
 
-# Pye (What is pye?)
+# Raw Python (aka. pye)
 
 Collection of Python Classes For working with Network protocol Ethernet/TCP/IP/UDP/ICMP Etc Etc.
 
@@ -29,15 +29,7 @@ What things you need to install the software.
 
 ## Want to Contribute? Great!
 
-
-There Are 2 Methods.
-
-1. Pull Request ( Github Account Required ).
-
-2. Through Email.
-
-
-### 1. Pull Request ( Github A/c Required ). 
+### Pull Request 
 
 1. Fork it!
 
@@ -49,26 +41,14 @@ There Are 2 Methods.
 
 5. Submit a pull request :D
 
-
-
-### 2. Through Email.
-
-1. Send Your Updated Version On My Email.
-
-- surajsinghbisht054@gmail.com
-
-
-
 ## Built With
 
 * [Python](https://www.python.org/doc/) - Python Programming language
 
-
-
 ## Authors
 
 * **SurajSingh** - *Initial work* - [SurajSingh](https://github.com/surajsinghbisht054)
-
+* **HHQ. ZHANG** - *Current Matainer* - [Lightsing](https://github.com/lightsing)
 
 ## License
 
@@ -79,7 +59,3 @@ This project is licensed under the APACHE 2.0 License - see the [LICENSE.md](LIC
 * Hat tip to anyone who's code was used
 * Inspiration
 * etc
-
-
-
-
