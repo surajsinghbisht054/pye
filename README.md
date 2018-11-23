@@ -1,7 +1,7 @@
 
 # Raw Python (aka. pye)
 
-Collection of Python Classes For working with Network protocol Ethernet/TCP/IP/UDP/ICMP Etc Etc.
+Util for Python to work with raw socket and network protocols (Ethernet/TCP/IP/UDP/ICMP etc.).
 
 ## STILL UNDER DEVELOPING
 
