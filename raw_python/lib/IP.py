@@ -106,7 +106,8 @@ class IPPacket(Packet):
 # IP Header Extraction
 def parse_ip_header(data):
     unpacked = struct.unpack("!BBHHHBBH4s4s", data)
-    _version = unpacked[0]
+    _version = unpacked[0] >> 4
+    _ihl = unpacked[0] & 0xf
     _tos = unpacked[1]
     _total_length = unpacked[2]
     _identification = unpacked[3]
@@ -118,6 +119,7 @@ def parse_ip_header(data):
     _destination_address = socket.inet_ntoa(unpacked[9])
 
     data = {'Version': _version,
+            'IHL': _ihl,
             "Tos": _tos,
             "Total Length": _total_length,
             "Identification": _identification,
