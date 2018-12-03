@@ -1,2 +1,5 @@
 *.pyc
 .idea/*
+
+# macOS
+.DS_Store
