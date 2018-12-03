@@ -63,7 +63,7 @@ class IPPacket(Packet):
         self.idf = idf
         # ---- [ Flags ]
         self.flags = flag_rsv + flag_dtf + flag_mrf + frag_offset
-        # ---- [ Total Length ]
+        # ---- [ Time to live ]
         self.ttl = ttl
         # ---- [ Protocol ]
         self.protocol = proto
