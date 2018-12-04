@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/hguandl/raw_python.svg?branch=master)](https://travis-ci.org/hguandl/raw_python)
 
 # Raw Python (aka. pye)
 
