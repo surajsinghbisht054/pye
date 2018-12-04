@@ -35,9 +35,9 @@ __status__ = 'Production'
 
 import socket
 
-from raw_python import EtherPacket, IPPacket, ICMPPacket, TCPPacket, \
+from .. import EtherPacket, IPPacket, ICMPPacket, TCPPacket, \
     parse_icmp_header, parse_ip_header, parse_eth_header
-from raw_python.lib.IP import load_ip, LINKTYPE0
+from ..lib.IP import load_ip, LINKTYPE0
 
 
 def ether_test():
@@ -102,8 +102,8 @@ def udp_test():
 
 
 if __name__ == '__main__':
-    ether_test()
+    # ether_test()
     ip_test()
-    icmp_test()
-    tcp_test()
-    udp_test()
+    # icmp_test()
+    # tcp_test()
+    # udp_test()

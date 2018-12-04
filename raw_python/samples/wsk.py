@@ -37,7 +37,7 @@ import os
 # import module
 import tempfile
 
-from PcapHandler import Pcap
+from .PcapHandler import Pcap
 
 
 def hexdump(data):
