@@ -50,7 +50,7 @@ def all_interfaces():
     # Create a dummy socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    names = array.array('B', '\0' * bytes)
+    names = array.array('B', b'\0' * bytes)
 
     outbytes = struct.unpack('iL', fcntl.ioctl(
         s.fileno(),
@@ -63,7 +63,7 @@ def all_interfaces():
     lst = []
 
     for i in range(0, outbytes, 40):
-        name = namestr[i:i + 16].split('\0', 1)[0]
+        name = namestr[i:i + 16].split(b'\0', 1)[0]
         ip = namestr[i + 20:i + 24]
         lst.append((name, socket.inet_ntoa(ip)))
 
@@ -73,7 +73,7 @@ def all_interfaces():
 
 def get_mac(interface, p=0):
     s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW)
-    s.bind((interface, p))
+    s.bind((interface.decode(), p))
     mac = hexlify(s.getsockname()[4])
     s.close()
     return mac

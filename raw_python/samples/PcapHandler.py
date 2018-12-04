@@ -34,6 +34,7 @@ __status__ = 'Production                         '  # Project Status
 
 # import module
 import time
+import struct
 
 #     Pcap Global Header Format :
 #                       ( magic number + 
