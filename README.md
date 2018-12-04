@@ -18,6 +18,10 @@ Education purpose Mainly.
 
 ## Getting Started
 
+```bash
+pip install git+https://github.com/lightsing/raw_python
+```
+
 Well,  If you also want to play with low level networking problems and want to learn about networking protocol. Fork it! 
 
 ## Newbie?
