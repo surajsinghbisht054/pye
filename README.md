@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hguandl/raw_python.svg?branch=master)](https://travis-ci.org/hguandl/raw_python)
+[![Build Status](https://travis-ci.org/lightsing/raw_python.svg?branch=master)](https://travis-ci.org/lightsing/raw_python)
 
 # Raw Python (aka. pye)
 
