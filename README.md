@@ -1,10 +1,26 @@
+[![Build Status](https://travis-ci.org/lightsing/raw_python.svg?branch=master)](https://travis-ci.org/lightsing/raw_python)
 
-# Pye (What is pye?)
+# Raw Python (aka. pye)
 
-Collection of Python Classes For working with Network protocol Ethernet/TCP/IP/UDP/ICMP Etc Etc.
+Util for Python to work with raw socket and network protocols (Ethernet/TCP/IP/UDP/ICMP etc.).
 
+## STILL UNDER DEVELOPING
+
+This project is migrate from pye (python2) to current project.
+
+Fork and send pr to this project!
+
+### Disclaimer
+
+This project is for Computer Network Course, Dept. CSE, SUSTech.
+
+Education purpose Mainly.
 
 ## Getting Started
+
+```bash
+pip install git+https://github.com/lightsing/raw_python
+```
 
 Well,  If you also want to play with low level networking problems and want to learn about networking protocol. Fork it! 
 
@@ -29,15 +45,7 @@ What things you need to install the software.
 
 ## Want to Contribute? Great!
 
-
-There Are 2 Methods.
-
-1. Pull Request ( Github Account Required ).
-
-2. Through Email.
-
-
-### 1. Pull Request ( Github A/c Required ). 
+### Pull Request 
 
 1. Fork it!
 
@@ -49,26 +57,14 @@ There Are 2 Methods.
 
 5. Submit a pull request :D
 
-
-
-### 2. Through Email.
-
-1. Send Your Updated Version On My Email.
-
-- surajsinghbisht054@gmail.com
-
-
-
 ## Built With
 
 * [Python](https://www.python.org/doc/) - Python Programming language
 
-
-
 ## Authors
 
 * **SurajSingh** - *Initial work* - [SurajSingh](https://github.com/surajsinghbisht054)
-
+* **HHQ. ZHANG** - *Current Matainer* - [Lightsing](https://github.com/lightsing)
 
 ## License
 
@@ -79,7 +75,3 @@ This project is licensed under the APACHE 2.0 License - see the [LICENSE.md](LIC
 * Hat tip to anyone who's code was used
 * Inspiration
 * etc
-
-
-
-
